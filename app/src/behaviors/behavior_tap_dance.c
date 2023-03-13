@@ -193,14 +193,17 @@ static int tap_dance_position_state_changed_listener(const zmk_event_t *eh);
 
 ZMK_LISTENER(behavior_tap_dance, tap_dance_position_state_changed_listener);
 ZMK_SUBSCRIPTION(behavior_tap_dance, zmk_position_state_changed);
+ZMK_SUBSCRIPTION(behavior_tap_dance, zmk_keycode_state_changed);
 
 static int tap_dance_position_state_changed_listener(const zmk_event_t *eh) {
-    struct zmk_position_state_changed *ev = as_zmk_position_state_changed(eh);
-    if (ev == NULL) {
+    struct zmk_position_state_changed *pev = as_zmk_position_state_changed(eh);
+    struct zmk_keycode_state_changed *kev = as_zmk_keycode_state_changed(eh);
+
+    if (pev == NULL && kev == NULL) {
         return ZMK_EV_EVENT_BUBBLE;
     }
-    if (!ev->state) {
-        LOG_DBG("Ignore upstroke at position %d.", ev->position);
+    if (pev!=NULL && !pev->state) {
+        LOG_DBG("Ignore upstroke at position %d.", pev->position);
         return ZMK_EV_EVENT_BUBBLE;
     }
     for (int i = 0; i < ZMK_BHV_TAP_DANCE_MAX_HELD; i++) {
@@ -208,15 +211,16 @@ static int tap_dance_position_state_changed_listener(const zmk_event_t *eh) {
         if (tap_dance->position == ZMK_BHV_TAP_DANCE_POSITION_FREE) {
             continue;
         }
-        if (tap_dance->position == ev->position) {
+        if (pev=!NULL && tap_dance->position == pev->position) {
             continue;
         }
         stop_timer(tap_dance);
         LOG_DBG("Tap dance interrupted, activating tap-dance at %d", tap_dance->position);
+        int64_t timestamp = pev!=NULL ? pev->timestamp : kev->timestamp;
         if (!tap_dance->tap_dance_decided) {
-            press_tap_dance_behavior(tap_dance, ev->timestamp);
+            press_tap_dance_behavior(tap_dance, timestamp);
             if (!tap_dance->is_pressed) {
-                release_tap_dance_behavior(tap_dance, ev->timestamp);
+                release_tap_dance_behavior(tap_dance, timestamp);
             }
             return ZMK_EV_EVENT_BUBBLE;
         }
