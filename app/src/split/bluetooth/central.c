@@ -628,6 +628,7 @@ int zmk_split_bt_invoke_behavior(uint8_t source, struct zmk_behavior_binding *bi
     return split_bt_invoke_behavior_payload(wrapper);
 }
 
+#if IS_ENABLED(CONFIG_ZMK_RGB_UNDERGLOW)
 K_THREAD_STACK_DEFINE(split_central_split_led_q_stack,
                       CONFIG_ZMK_SPLIT_BLE_CENTRAL_SPLIT_LED_STACK_SIZE);
 
@@ -686,7 +687,9 @@ int zmk_split_bt_update_led(struct zmk_periph_led *periph) {
 
     return split_bt_update_led_payload(payload);
 }
+#endif
 
+#if IS_ENABLED(CONFIG_ZMK_BACKLIGHT)
 K_THREAD_STACK_DEFINE(split_central_split_bl_q_stack,
                       CONFIG_ZMK_SPLIT_BLE_CENTRAL_SPLIT_BL_STACK_SIZE);
 
@@ -744,17 +747,25 @@ int zmk_split_bt_update_bl(struct backlight_state *periph) {
 
     return split_bt_update_bl_payload(payload);
 }
+#endif
 
 int zmk_split_bt_central_init(const struct device *_arg) {
     k_work_queue_start(&split_central_split_run_q, split_central_split_run_q_stack,
                        K_THREAD_STACK_SIZEOF(split_central_split_run_q_stack),
                        CONFIG_ZMK_BLE_THREAD_PRIORITY, NULL);
+
+#if IS_ENABLED(CONFIG_ZMK_RGB_UNDERGLOW)
     k_work_queue_start(&split_central_split_led_q, split_central_split_led_q_stack,
                        K_THREAD_STACK_SIZEOF(split_central_split_led_q_stack),
                        CONFIG_ZMK_BLE_THREAD_PRIORITY, NULL);
+#endif
+
+#if IS_ENABLED(CONFIG_ZMK_BACKLIGHT)
     k_work_queue_start(&split_central_split_bl_q, split_central_split_bl_q_stack,
                        K_THREAD_STACK_SIZEOF(split_central_split_bl_q_stack),
                        CONFIG_ZMK_BLE_THREAD_PRIORITY, NULL);
+#endif
+
     bt_conn_cb_register(&conn_callbacks);
 
     return start_scan();

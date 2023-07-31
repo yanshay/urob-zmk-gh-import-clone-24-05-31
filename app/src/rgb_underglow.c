@@ -82,7 +82,9 @@ static struct rgb_underglow_state state;
 
 static struct zmk_periph_led led_data;
 
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE)
 static bool last_ble_state[2];
+#endif
 
 static bool triggered;
 
@@ -328,6 +330,7 @@ static void zmk_rgb_underglow_effect_kinesis() {
         zmk_rgb_underglow_central_send();
     }
 #else
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE)
     // leds for peripheral(right) side
     /* if (zmk_ble_active_profile_is_open()) {
         pixels[0].r = CONFIG_ZMK_RGB_UNDERGLOW_BRT_SCALE * last_ble_state[0];
@@ -361,6 +364,7 @@ static void zmk_rgb_underglow_effect_kinesis() {
         }
         state.animation_step++;
     } else {
+#endif
         // set first led as LED_NUMLOCK
         pixels[2].r =
             (led_data.indicators & ZMK_LED_NUMLOCK_BIT) * CONFIG_ZMK_RGB_UNDERGLOW_BRT_SCALE;
@@ -423,7 +427,9 @@ static void zmk_rgb_underglow_effect_kinesis() {
             pixels[0].b = 0;
             break;
         }
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE)
     }
+#endif
 #endif
 }
 
