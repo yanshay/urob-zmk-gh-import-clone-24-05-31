@@ -635,7 +635,6 @@ static int zmk_rgb_underglow_init(const struct device *_arg) {
     k_work_init_delayable(&led_update_work, zmk_rgb_underglow_central_send);
 #endif
 
-    zmk_rgb_underglow_save_state();
     k_work_submit_to_queue(zmk_workqueue_lowprio_work_q(), &underglow_tick_work);
     zmk_rgb_underglow_off();
     if (IS_ENABLED(CONFIG_ZMK_RGB_UNDERGLOW_ON_START))
@@ -669,7 +668,7 @@ int zmk_rgb_underglow_on() {
     state.animation_step = 0;
     k_timer_start(&underglow_tick, K_NO_WAIT, K_MSEC(50));
 
-    return zmk_rgb_underglow_save_state();
+    return 0;
 }
 
 static void zmk_rgb_underglow_off_handler(struct k_work *work) {
@@ -700,7 +699,7 @@ int zmk_rgb_underglow_off() {
     k_timer_stop(&underglow_tick);
     state.on = false;
 
-    return zmk_rgb_underglow_save_state();
+    return 0;
 }
 
 int zmk_rgb_underglow_calc_effect(int direction) {
@@ -718,7 +717,7 @@ int zmk_rgb_underglow_select_effect(int effect) {
     state.current_effect = effect;
     state.animation_step = 0;
 
-    return zmk_rgb_underglow_save_state();
+    return 0;
 }
 
 int zmk_rgb_underglow_cycle_effect(int direction) {
