@@ -35,7 +35,7 @@
  */
 #define ZMK_ENDPOINT_COUNT (ZMK_ENDPOINT_USB_COUNT + ZMK_ENDPOINT_BLE_COUNT)
 
-bool zmk_endpoint_instance_eq(struct zmk_endpoint_instance a, struct zmk_endpoint_instance b);
+bool zmk_endpoint_instance_equals(struct zmk_endpoint_instance a, struct zmk_endpoint_instance b);
 
 /**
  * Writes a string identifying an endpoint instance.
@@ -45,7 +45,7 @@ bool zmk_endpoint_instance_eq(struct zmk_endpoint_instance a, struct zmk_endpoin
  *
  * @returns Number of characters written.
  */
-int zmk_endpoint_instance_to_str(struct zmk_endpoint_instance endpoint, char *str, size_t len);
+int zmk_endpoint_instance_print(char *str, size_t len, struct zmk_endpoint_instance endpoint);
 
 /**
  * Gets a unique index for an endpoint instance. This can be used together with

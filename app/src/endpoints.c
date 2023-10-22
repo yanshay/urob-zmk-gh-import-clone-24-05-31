@@ -48,7 +48,7 @@ static int endpoints_save_preferred(void) {
 #endif
 }
 
-bool zmk_endpoint_instance_eq(struct zmk_endpoint_instance a, struct zmk_endpoint_instance b) {
+bool zmk_endpoint_instance_equals(struct zmk_endpoint_instance a, struct zmk_endpoint_instance b) {
     if (a.transport != b.transport) {
         return false;
     }
@@ -65,7 +65,7 @@ bool zmk_endpoint_instance_eq(struct zmk_endpoint_instance a, struct zmk_endpoin
     return false;
 }
 
-int zmk_endpoint_instance_to_str(struct zmk_endpoint_instance endpoint, char *str, size_t len) {
+int zmk_endpoint_instance_print(char *str, size_t len, struct zmk_endpoint_instance endpoint) {
     switch (endpoint.transport) {
     case ZMK_TRANSPORT_USB:
         return snprintf(str, len, "USB");
@@ -305,14 +305,14 @@ static void disconnect_current_endpoint() {
 static void update_current_endpoint(void) {
     struct zmk_endpoint_instance new_instance = get_selected_instance();
 
-    if (!zmk_endpoint_instance_eq(new_instance, current_instance)) {
+    if (!zmk_endpoint_instance_equals(new_instance, current_instance)) {
         // Cancel all current keypresses so keys don't stay held on the old endpoint.
         disconnect_current_endpoint();
 
         current_instance = new_instance;
 
         char endpoint_str[ZMK_ENDPOINT_STR_LEN];
-        zmk_endpoint_instance_to_str(current_instance, endpoint_str, sizeof(endpoint_str));
+        zmk_endpoint_instance_print(endpoint_str, sizeof(endpoint_str), current_instance);
         LOG_INF("Endpoint changed: %s", endpoint_str);
 
         ZMK_EVENT_RAISE(

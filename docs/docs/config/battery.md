@@ -20,6 +20,10 @@ Definition file: [zmk/app/Kconfig](https://github.com/zmkfirmware/zmk/blob/main/
 
 While `CONFIG_ZMK_BATTERY_REPORTING` is disabled by default it is implied by `CONFIG_ZMK_BLE`, thus any board with BLE enabled will have this automatically enabled unless explicitly overriden.
 
+:::note
+
+On MacOS the BLE battery reporting packets can cause the computer to wakeup from sleep, the battery service can be disabled indepently of battery monitoring (allowing the battery level to be displayed on a screen or through a custom lighting implementation) by setting `CONFIG_BT_BAS=n`
+
 :::
 
 ### Devicetree
