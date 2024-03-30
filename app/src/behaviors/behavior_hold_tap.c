@@ -308,6 +308,13 @@ static void decide_tap_unless_interrupted(struct active_hold_tap *hold_tap,
         hold_tap->status = STATUS_TAP;
         return;
     case HT_OTHER_KEY_DOWN:
+        if (hold_tap->config->hold_trigger_on_release)
+            return;
+        hold_tap->status = STATUS_HOLD_INTERRUPT;
+        return;
+    case HT_OTHER_KEY_UP:
+        if (!hold_tap->config->hold_trigger_on_release)
+            return;
         hold_tap->status = STATUS_HOLD_INTERRUPT;
         return;
     case HT_TIMER_EVENT:
@@ -327,6 +334,13 @@ static void decide_hold_preferred(struct active_hold_tap *hold_tap, enum decisio
         hold_tap->status = STATUS_TAP;
         return;
     case HT_OTHER_KEY_DOWN:
+        if (hold_tap->config->hold_trigger_on_release)
+            return;
+        hold_tap->status = STATUS_HOLD_INTERRUPT;
+        return;
+    case HT_OTHER_KEY_UP:
+        if (!hold_tap->config->hold_trigger_on_release)
+            return;
         hold_tap->status = STATUS_HOLD_INTERRUPT;
         return;
     case HT_TIMER_EVENT:
