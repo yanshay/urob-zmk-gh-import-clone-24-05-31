@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-dsfsdf  sdfjsdlkfj introduce error on purpose --- !!!!
 #define DT_DRV_COMPAT zmk_behavior_tap_dance
 
 #include <zephyr/device.h>
@@ -12,47 +11,47 @@ dsfsdf  sdfjsdlkfj introduce error on purpose --- !!!!
 #include <zmk/behavior.h>
 #include <zmk/keymap.h>
 #include <zmk/matrix.h>
-// #include <zmk/event_manager.h>
-// #include <zmk/events/position_state_changed.h>
-// #include <zmk/events/keycode_state_changed.h>
-// #include <zmk/hid.h>
-//
-// LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
-//
-// #if DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT)
-//
-// #define ZMK_BHV_TAP_DANCE_MAX_HELD 10
-//
-// #define ZMK_BHV_TAP_DANCE_POSITION_FREE UINT32_MAX
-//
-// struct behavior_tap_dance_config {
-//     uint32_t tapping_term_ms;
-//     size_t behavior_count;
-//     struct zmk_behavior_binding *behaviors;
-// };
-//
-// struct active_tap_dance {
-//     // Tap Dance Data
-//     int counter;
-//     uint32_t position;
-//     uint32_t param1;
-//     uint32_t param2;
-//     bool is_pressed;
-//     const struct behavior_tap_dance_config *config;
-//
-//     // Timer Data
-//     bool timer_started;
-//     bool timer_cancelled;
-//     bool tap_dance_decided;
-//     int64_t release_at;
-//     struct k_work_delayable release_timer;
-// };
-//
-// struct active_tap_dance active_tap_dances[ZMK_BHV_TAP_DANCE_MAX_HELD] = {};
-//
-// static struct active_tap_dance *find_tap_dance(uint32_t position) {
-//     for (int i = 0; i < ZMK_BHV_TAP_DANCE_MAX_HELD; i++) {
-//         if (active_tap_dances[i].position == position && !active_tap_dances[i].timer_cancelled) {
+#include <zmk/event_manager.h>
+#include <zmk/events/position_state_changed.h>
+#include <zmk/events/keycode_state_changed.h>
+#include <zmk/hid.h>
+
+LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
+
+#if DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT)
+
+#define ZMK_BHV_TAP_DANCE_MAX_HELD 10
+
+#define ZMK_BHV_TAP_DANCE_POSITION_FREE UINT32_MAX
+
+struct behavior_tap_dance_config {
+    uint32_t tapping_term_ms;
+    size_t behavior_count;
+    struct zmk_behavior_binding *behaviors;
+};
+
+struct active_tap_dance {
+    // Tap Dance Data
+    int counter;
+    uint32_t position;
+    uint32_t param1;
+    uint32_t param2;
+    bool is_pressed;
+    const struct behavior_tap_dance_config *config;
+
+    // Timer Data
+    bool timer_started;
+    bool timer_cancelled;
+    bool tap_dance_decided;
+    int64_t release_at;
+    struct k_work_delayable release_timer;
+};
+
+struct active_tap_dance active_tap_dances[ZMK_BHV_TAP_DANCE_MAX_HELD] = {};
+
+static struct active_tap_dance *find_tap_dance(uint32_t position) {
+    for (int i = 0; i < ZMK_BHV_TAP_DANCE_MAX_HELD; i++) {
+        if (active_tap_dances[i].position == position && !active_tap_dances[i].timer_cancelled) {
             return &active_tap_dances[i];
         }
     }
