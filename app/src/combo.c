@@ -291,22 +291,12 @@ static inline int press_combo_behavior(struct combo_cfg *combo, int32_t timestam
 
     last_combo_timestamp = timestamp;
 
-    raise_zmk_position_state_changed(
-        // (struct zmk_position_state_changed){.source = ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL,
-        //                                     .state = pressed,
-        //                                     .position = position,
-        //                                     .timestamp = k_uptime_get()});
-        (struct zmk_position_state_changed){ .source = 0, // not ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL,
-                                            .state = true,
-                                            .position = -1, // not combo->virtual_key_position,
-                                            .timestamp = timestamp});
+    ZMK_EVENT_RAISE(new_zmk_position_state_changed((struct zmk_position_state_changed){
+        .source = 0, // not ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL,
+        .state = true,
+        .position = -1, // not combo->virtual_key_position,
+        .timestamp = timestamp}));
 
-    // ZMK_EVENT_RAISE(new_zmk_position_state_changed((struct zmk_position_state_changed){
-    //     .source = 0, // not ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL,
-    //     .state = true,
-    //     .position = -1, // not combo->virtual_key_position,
-    //     .timestamp = timestamp}));
-  
     return behavior_keymap_binding_pressed(&combo->behavior, event);
 }
 
@@ -316,17 +306,12 @@ static inline int release_combo_behavior(struct combo_cfg *combo, int32_t timest
         .timestamp = timestamp,
     };
 
-    raise_zmk_position_state_changed(
-        (struct zmk_position_state_changed){.source = 0, // not ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL,
-                                            .state = false,
-                                            .position = -1, // not combo->virtual_key_position,
-                                            .timestamp = timestamp});
+    ZMK_EVENT_RAISE(new_zmk_position_state_changed((struct zmk_position_state_changed){
+        .source = 0, // not ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL,
+        .state = false,
+        .position = -1, // not combo->virtual_key_position,
+        .timestamp = timestamp}));
 
-    // ZMK_EVENT_RAISE(new_zmk_position_state_changed((struct zmk_position_state_changed){
-    //     .source = 0, // not ZMK_POSITION_STATE_CHANGE_SOURCE_LOCAL,
-    //     .state = false,
-    //     .position = -1, // not combo->virtual_key_position,
-    //     .timestamp = timestamp}));
     return behavior_keymap_binding_released(&combo->behavior, event);
 }
 
